@@ -44,21 +44,11 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
   useEffect(() => {
-    // Initialize Leaflet map
     const initMap = async () => {
-      // Dynamic import to avoid SSR issues
-      const L = await import('leaflet');
-
-      if (mapRef.current && !map) {
-        const mapInstance = L.map(mapRef.current).setView([-23.5505, -46.6333], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(mapInstance);
-
-        setMap(mapInstance);
-      }
-    };
+    // Placeholder for map initialization
+    // For now, we'll show a simplified view without actual map integration
+    console.log('Map initialization placeholder');
+  };
 
     initMap();
 
@@ -200,150 +190,60 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
     : assignments.filter(a => a.status === selectedFilter);
 
   return (
-    <>
-      {/* Map Container */}
-      <div 
-        ref={mapRef} 
-        className="w-full h-full bg-gray-100 relative"
-        style={{ minHeight: '400px' }}
-      />
+    <div className="w-full h-full relative bg-gray-100 rounded-lg overflow-hidden">
+      {/* Map Placeholder */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+        <div className="text-center">
+          <MapPin className="w-16 h-16 text-election-blue mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-dark-slate mb-2">Mapa Interativo</h3>
+          <p className="text-slate-grey">Visualização das regiões de pesquisa</p>
+        </div>
+      </div>
 
-      {/* Map Controls */}
-      <Card className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 z-10 max-w-xs">
-        <CardHeader className="p-0 pb-3">
-          <CardTitle className="text-sm font-semibold text-dark-slate">
-            <MapPin className="w-4 h-4 inline mr-2" />
-            Controles do Mapa
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="space-y-3 mb-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-success-green rounded-full"></div>
-              <span className="text-sm text-dark-slate">Concluído</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-warning-amber rounded-full"></div>
-              <span className="text-sm text-dark-slate">Em Progresso</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-election-blue rounded-full"></div>
-              <span className="text-sm text-dark-slate">Pendente</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-              <span className="text-sm text-dark-slate">Atrasado</span>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-dark-slate">Filtrar por status:</p>
-            <div className="flex flex-wrap gap-1">
-              <Button
-                variant={selectedFilter === 'all' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedFilter('all')}
-                className={selectedFilter === 'all' ? 'bg-election-blue text-white' : ''}
-              >
-                Todos
-              </Button>
-              <Button
-                variant={selectedFilter === 'completed' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedFilter('completed')}
-                className={selectedFilter === 'completed' ? 'bg-success-green text-white' : ''}
-              >
-                Concluído
-              </Button>
-              <Button
-                variant={selectedFilter === 'in_progress' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedFilter('in_progress')}
-                className={selectedFilter === 'in_progress' ? 'bg-warning-amber text-white' : ''}
-              >
-                Progresso
-              </Button>
-              <Button
-                variant={selectedFilter === 'pending' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedFilter('pending')}
-                className={selectedFilter === 'pending' ? 'bg-election-blue text-white' : ''}
-              >
-                Pendente
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Assignment List - Mobile View */}
-      <Card className="lg:hidden absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10 max-w-xs max-h-80 overflow-y-auto">
-        <CardHeader className="p-0 pb-3">
-          <CardTitle className="text-sm font-semibold text-dark-slate">
-            Atribuições ({filteredAssignments.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="space-y-2">
-            {filteredAssignments.length === 0 ? (
-              <p className="text-xs text-slate-grey text-center py-4">
-                Nenhuma atribuição encontrada
-              </p>
-            ) : (
-              filteredAssignments.map((assignment) => (
-                <div
-                  key={assignment.id}
-                  className="p-2 border border-gray-200 rounded cursor-pointer hover:bg-gray-50"
-                  onClick={() => onAssignmentClick(assignment)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-dark-slate truncate">
-                        {assignment.survey?.title || 'Pesquisa'}
-                      </p>
-                      <p className="text-xs text-slate-grey truncate">
-                        {assignment.region?.name || 'Região'}
-                      </p>
-                    </div>
-                    <div className={`flex items-center space-x-1 ${getStatusColor(assignment.status)}`}>
-                      {getStatusIcon(assignment.status)}
-                    </div>
+      {/* Assignment Cards */}
+      <div className="absolute inset-4 overflow-y-auto">
+        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+          {assignments.map((assignment) => (
+            <Card key={assignment.id} className="bg-white/95 backdrop-blur-sm shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-dark-slate text-sm mb-1">
+                      {assignment.survey?.title || "Pesquisa"}
+                    </h4>
+                    <p className="text-xs text-slate-grey flex items-center">
+                      <MapPin className="w-3 h-3 mr-1" />
+                      {assignment.region?.name || "Região"}
+                    </p>
                   </div>
-                  <div className="mt-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-grey">Progresso</span>
-                      <span className="text-dark-slate">
-                        {assignment.completedResponses}/{assignment.targetResponses}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
-                      <div 
-                        className="bg-election-blue h-1 rounded-full transition-all duration-300"
-                        style={{ 
-                          width: `${Math.min(100, (assignment.completedResponses / assignment.targetResponses) * 100)}%` 
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <Badge 
+                    variant="outline" 
+                    className={getStatusColor(assignment.status)}
+                  >
+                    {getStatusLabel(assignment.status)}
+                  </Badge>
                 </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Load Leaflet CSS */}
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossOrigin=""
-      />
-      <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossOrigin=""
-      />
-    </>
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-slate-grey">
+                    <span className="font-medium text-dark-slate">
+                      {assignment.completedResponses}
+                    </span>
+                    /{assignment.targetResponses} respostas
+                  </div>
+                  <Button 
+                    size="sm" 
+                    onClick={() => onAssignmentClick?.(assignment)}
+                    className="bg-election-blue hover:bg-blue-700 text-xs px-3 py-1 h-auto"
+                  >
+                    Iniciar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

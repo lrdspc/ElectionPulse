@@ -1,37 +1,60 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Route, Switch } from "wouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/use-auth";
-import { ProtectedRoute } from "./lib/protected-route";
-import NotFound from "@/pages/not-found";
+import { Toaster } from "@/components/ui/toaster";
+import ProtectedRoute from "@/lib/protected-route";
 import AuthPage from "@/pages/auth-page";
 import AdminDashboard from "@/pages/admin-dashboard";
+import AdminSurveys from "@/pages/admin-surveys";
+import AdminRegions from "@/pages/admin-regions";
+import AdminResearchers from "@/pages/admin-researchers";
+import AdminReports from "@/pages/admin-reports";
 import ResearcherDashboard from "@/pages/researcher-dashboard";
+import NotFound from "@/pages/not-found";
+import { queryClient } from "@/lib/queryClient";
 
-function Router() {
-  return (
-    <Switch>
-      <ProtectedRoute path="/" component={AdminDashboard} requiredRole="admin" />
-      <ProtectedRoute path="/researcher" component={ResearcherDashboard} requiredRole="researcher" />
-      <Route path="/auth" component={AuthPage} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
-
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Router />
-        </AuthProvider>
-      </TooltipProvider>
+      <AuthProvider>
+        <div className="App">
+          <Switch>
+            <Route path="/" component={AuthPage} />
+            <Route path="/admin">
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/admin/surveys">
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminSurveys />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/admin/regions">
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminRegions />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/admin/researchers">
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminResearchers />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/admin/reports">
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminReports />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/researcher">
+              <ProtectedRoute allowedRoles={["researcher"]}>
+                <ResearcherDashboard />
+              </ProtectedRoute>
+            </Route>
+            <Route component={NotFound} />
+          </Switch>
+        </div>
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
-
-export default App;
