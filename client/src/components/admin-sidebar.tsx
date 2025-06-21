@@ -21,11 +21,11 @@ export default function AdminSidebar() {
   };
 
   const menuItems = [
-    { path: "/", icon: Gauge, label: "Dashboard", active: location === "/" },
-    { path: "/surveys", icon: BarChart3, label: "Pesquisas", active: location === "/surveys" },
-    { path: "/regions", icon: Map, label: "Regiões", active: location === "/regions" },
-    { path: "/researchers", icon: Users, label: "Pesquisadores", active: location === "/researchers" },
-    { path: "/reports", icon: FileText, label: "Relatórios", active: location === "/reports" },
+    { path: "/admin", icon: Gauge, label: "Dashboard", active: location === "/admin" },
+    { path: "/admin/surveys", icon: BarChart3, label: "Pesquisas", active: location === "/admin/surveys" },
+    { path: "/admin/regions", icon: Map, label: "Regiões", active: location === "/admin/regions" },
+    { path: "/admin/researchers", icon: Users, label: "Pesquisadores", active: location === "/admin/researchers" },
+    { path: "/admin/reports", icon: FileText, label: "Relatórios", active: location === "/admin/reports" },
   ];
 
   return (
