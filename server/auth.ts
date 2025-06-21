@@ -59,21 +59,52 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/register", async (req, res, next) => {
-    const existingUser = await storage.getUserByUsername(req.body.username);
-    if (existingUser) {
-      return res.status(400).send("Username already exists");
+    try {
+      // Validar dados obrigatórios
+      const { username, email, password, name, role } = req.body;
+      
+      if (!username || !email || !password || !name || !role) {
+        return res.status(400).json({ message: "Todos os campos são obrigatórios" });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({ message: "Senha deve ter pelo menos 6 caracteres" });
+      }
+
+      if (!['admin', 'researcher'].includes(role)) {
+        return res.status(400).json({ message: "Role deve ser 'admin' ou 'researcher'" });
+      }
+
+      // Verificar se usuário já existe
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Nome de usuário já existe" });
+      }
+
+      const existingEmail = await storage.getUserByEmail(email);
+      if (existingEmail) {
+        return res.status(400).json({ message: "Email já está cadastrado" });
+      }
+
+      // Criar usuário
+      const user = await storage.createUser({
+        username,
+        email,
+        password: await hashPassword(password),
+        name,
+        role,
+      });
+
+      // Fazer login automático após registro
+      req.login(user, (err) => {
+        if (err) return next(err);
+        const { password: _, ...userWithoutPassword } = user;
+        res.status(201).json(userWithoutPassword);
+      });
+    } catch (error) {
+      console.error("Erro no registro:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
     }
-
-    const user = await storage.createUser({
-      ...req.body,
-      password: await hashPassword(req.body.password),
-    });
-
-    req.login(user, (err) => {
-      if (err) return next(err);
-      const { password, ...userWithoutPassword } = user;
-      res.status(201).json(userWithoutPassword);
-    });
   });
 
   app.post("/api/login", (req, res, next) => {
