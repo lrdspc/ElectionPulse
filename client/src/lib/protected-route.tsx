@@ -29,7 +29,7 @@ export function ProtectedRoute({
   if (!user) {
     return (
       <Route path={path}>
-        <Redirect to="/auth" />
+        <Redirect to="/" />
       </Route>
     );
   }
@@ -38,7 +38,7 @@ export function ProtectedRoute({
   if (requiredRole && user.role !== requiredRole) {
     return (
       <Route path={path}>
-        <Redirect to={user.role === "admin" ? "/" : "/researcher"} />
+        <Redirect to={user.role === "admin" ? "/admin" : "/researcher"} />
       </Route>
     );
   }
