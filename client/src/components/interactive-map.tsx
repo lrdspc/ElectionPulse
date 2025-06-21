@@ -48,15 +48,20 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
     const initMap = async () => {
       // Dynamic import to avoid SSR issues
       const L = await import('leaflet');
-      
-      if (mapRef.current && !map) {
-        const mapInstance = L.map(mapRef.current).setView([-23.5505, -46.6333], 13);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(mapInstance);
 
-        setMap(mapInstance);
+      if (mapRef.current && !map) {
+        const mapInstance = L.then((L) => {
+          const mapInstance = L.map(mapRef.current).setView([-23.5505, -46.6333], 13);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+          }).addTo(mapInstance);
+          return mapInstance;
+        });
+
+        mapInstance.then(mapInstance => {
+          setMap(mapInstance);
+        });
       }
     };
 
@@ -70,73 +75,78 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
   }, []);
 
   useEffect(() => {
-    if (map && assignments.length > 0) {
-      // Clear existing markers
-      map.eachLayer((layer: any) => {
-        if (layer.options && layer.options.assignment) {
-          map.removeLayer(layer);
-        }
-      });
+    const addMarkers = async () => {
+      if (map && assignments.length > 0) {
+        // Clear existing markers
+        map.eachLayer((layer: any) => {
+          if (layer.options && layer.options.assignment) {
+            map.removeLayer(layer);
+          }
+        });
 
-      // Add markers for assignments
-      const L = require('leaflet');
-      
-      assignments.forEach((assignment, index) => {
-        const coord = mockCoordinates[index % mockCoordinates.length];
-        
-        // Determine marker color based on status
-        let color = '#2B5CE6'; // election-blue
-        switch (assignment.status) {
-          case 'completed':
-            color = '#34D399'; // success-green
-            break;
-          case 'in_progress':
-            color = '#F59E0B'; // warning-amber
-            break;
-          case 'overdue':
-            color = '#EF4444'; // red
-            break;
-          default:
-            color = '#2B5CE6'; // election-blue
-        }
+        // Add markers for assignments
+        const L = await import('leaflet');
 
-        // Filter assignments based on selected filter
-        if (selectedFilter !== 'all' && assignment.status !== selectedFilter) {
-          return;
-        }
+        L.then((L) => {
+          assignments.forEach((assignment, index) => {
+            const coord = mockCoordinates[index % mockCoordinates.length];
 
-        const marker = L.circleMarker([coord.lat, coord.lng], {
-          color: color,
-          fillColor: color,
-          fillOpacity: 0.8,
-          radius: 8,
-          assignment: assignment
-        }).addTo(map);
+            // Determine marker color based on status
+            let color = '#2B5CE6'; // election-blue
+            switch (assignment.status) {
+              case 'completed':
+                color = '#34D399'; // success-green
+                break;
+              case 'in_progress':
+                color = '#F59E0B'; // warning-amber
+                break;
+              case 'overdue':
+                color = '#EF4444'; // red
+                break;
+              default:
+                color = '#2B5CE6'; // election-blue
+            }
 
-        // Add popup with assignment details
-        const popupContent = `
-          <div class="p-2 min-w-[200px]">
-            <h4 class="font-semibold text-sm mb-2">${assignment.survey?.title || 'Pesquisa'}</h4>
-            <p class="text-xs text-gray-600 mb-2">${assignment.region?.name || 'Região'}</p>
-            <div class="flex items-center justify-between text-xs mb-2">
-              <span>Progresso:</span>
-              <span class="font-medium">${assignment.completedResponses}/${assignment.targetResponses}</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2">
-              <div class="bg-blue-600 h-1.5 rounded-full" style="width: ${(assignment.completedResponses / assignment.targetResponses) * 100}%"></div>
-            </div>
-            <button 
-              onclick="window.handleAssignmentClick && window.handleAssignmentClick(${assignment.id})"
-              class="w-full bg-blue-600 text-white text-xs py-1 px-2 rounded hover:bg-blue-700"
-            >
-              Iniciar Pesquisa
-            </button>
-          </div>
-        `;
+            // Filter assignments based on selected filter
+            if (selectedFilter !== 'all' && assignment.status !== selectedFilter) {
+              return;
+            }
 
-        marker.bindPopup(popupContent);
-      });
-    }
+            const marker = L.circleMarker([coord.lat, coord.lng], {
+              color: color,
+              fillColor: color,
+              fillOpacity: 0.8,
+              radius: 8,
+              assignment: assignment
+            }).addTo(map);
+
+            // Add popup with assignment details
+            const popupContent = `
+              <div class="p-2 min-w-[200px]">
+                <h4 class="font-semibold text-sm mb-2">${assignment.survey?.title || 'Pesquisa'}</h4>
+                <p class="text-xs text-gray-600 mb-2">${assignment.region?.name || 'Região'}</p>
+                <div class="flex items-center justify-between text-xs mb-2">
+                  <span>Progresso:</span>
+                  <span class="font-medium">${assignment.completedResponses}/${assignment.targetResponses}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+                  <div class="bg-blue-600 h-1.5 rounded-full" style="width: ${(assignment.completedResponses / assignment.targetResponses) * 100}%"></div>
+                </div>
+                <button 
+                  onclick="window.handleAssignmentClick && window.handleAssignmentClick(${assignment.id})"
+                  class="w-full bg-blue-600 text-white text-xs py-1 px-2 rounded hover:bg-blue-700"
+                >
+                  Iniciar Pesquisa
+                </button>
+              </div>
+            `;
+
+            marker.bindPopup(popupContent);
+          });
+        });
+      }
+    };
+    addMarkers();
   }, [map, assignments, selectedFilter]);
 
   // Global function to handle assignment clicks from popup
