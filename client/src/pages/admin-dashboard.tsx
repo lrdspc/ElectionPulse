@@ -255,6 +255,9 @@ export default function AdminDashboard() {
           </div>
         </main>
       </div>
+    </div>
+  );
+}/div>
 
       {/* Survey Builder Modal */}
       {showSurveyBuilder && (

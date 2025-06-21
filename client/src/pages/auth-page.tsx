@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -88,190 +89,264 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-light-grey flex items-center justify-center">
-      <div className="w-full max-w-md px-4">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-election-blue rounded-full flex items-center justify-center mx-auto mb-4">
-            <Vote className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-election-blue/5 to-success-green/5 flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+        {/* Left Side - Features */}
+        <div className="hidden lg:block space-y-6">
+          <div className="space-y-4">
+            <h1 className="text-4xl font-bold text-dark-slate">
+              Sistema de Pesquisas Eleitorais
+            </h1>
+            <p className="text-lg text-slate-grey">
+              Plataforma completa para gerenciamento e coleta de dados eleitorais
+            </p>
           </div>
-          <h1 className="text-3xl font-bold text-dark-slate mb-2">ElectionSurvey</h1>
-          <p className="text-slate-grey">Plataforma de Pesquisas Eleitorais</p>
+
+          <div className="grid gap-6">
+            <div className="flex items-start space-x-4">
+              <div className="bg-election-blue/10 p-3 rounded-lg">
+                <Vote className="h-6 w-6 text-election-blue" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-dark-slate">Criação de Pesquisas</h3>
+                <p className="text-sm text-slate-grey">Crie pesquisas personalizadas com diferentes tipos de perguntas</p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="bg-success-green/10 p-3 rounded-lg">
+                <MapPin className="h-6 w-6 text-success-green" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-dark-slate">Gestão Geográfica</h3>
+                <p className="text-sm text-slate-grey">Atribua pesquisas a regiões específicas para coleta direcionada</p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="bg-warning-orange/10 p-3 rounded-lg">
+                <Users className="h-6 w-6 text-warning-orange" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-dark-slate">Equipe de Campo</h3>
+                <p className="text-sm text-slate-grey">Coordene pesquisadores e acompanhe o progresso em tempo real</p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="bg-election-red/10 p-3 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-election-red" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-dark-slate">Análise de Dados</h3>
+                <p className="text-sm text-slate-grey">Relatórios detalhados e estatísticas em tempo real</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <Card className="w-full">
-          <Tabs defaultValue="login" className="w-full">
-            <CardHeader>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Entrar</TabsTrigger>
-                <TabsTrigger value="register">Registrar</TabsTrigger>
-              </TabsList>
+        {/* Right Side - Auth Forms */}
+        <div className="w-full">
+          <Card className="w-full shadow-lg">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl font-bold text-dark-slate">Acesse sua conta</CardTitle>
+              <CardDescription>
+                Entre com suas credenciais ou crie uma nova conta
+              </CardDescription>
             </CardHeader>
-
             <CardContent>
-              <TabsContent value="login">
-                <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
-                    <FormField
-                      control={loginForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Usuário</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Digite seu usuário" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Senha</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Digite sua senha" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      className="w-full bg-election-blue hover:bg-blue-700"
-                      disabled={loginMutation.isPending}
-                    >
-                      {loginMutation.isPending ? "Entrando..." : "Entrar"}
-                    </Button>
-                    
-                    {/* Quick Login Buttons */}
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <p className="text-xs text-slate-grey text-center mb-3">Login rápido para teste:</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            loginForm.setValue("username", "admin");
-                            loginForm.setValue("password", "admin123");
-                            loginMutation.mutate({ username: "admin", password: "admin123" });
-                          }}
-                          disabled={loginMutation.isPending}
-                          className="text-xs"
-                        >
-                          Admin
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            loginForm.setValue("username", "researcher");
-                            loginForm.setValue("password", "researcher123");
-                            loginMutation.mutate({ username: "researcher", password: "researcher123" });
-                          }}
-                          disabled={loginMutation.isPending}
-                          className="text-xs"
-                        >
-                          Pesquisador
-                        </Button>
-                      </div>
-                    </div>
-                  </form>
-                </Form>
-              </TabsContent>
+              <Tabs defaultValue="login" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="login">Entrar</TabsTrigger>
+                  <TabsTrigger value="register">Cadastrar</TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="register">
-                <Form {...registerForm}>
-                  <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
-                    <FormField
-                      control={registerForm.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nome Completo</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Digite seu nome completo" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={registerForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="Digite seu email" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={registerForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Usuário</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Escolha um nome de usuário" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={registerForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Senha</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Crie uma senha" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={registerForm.control}
-                      name="role"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Tipo de Usuário</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <TabsContent value="login" className="space-y-4">
+                  <Form {...loginForm}>
+                    <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+                      <FormField
+                        control={loginForm.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Usuário</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione o tipo de usuário" />
-                              </SelectTrigger>
+                              <Input {...field} placeholder="Digite seu usuário" />
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="admin">Administrador</SelectItem>
-                              <SelectItem value="researcher">Pesquisador</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={loginForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Senha</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="password" placeholder="Digite sua senha" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {loginMutation.error && (
+                        <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+                          {String(loginMutation.error)}
+                        </div>
                       )}
-                    />
-                    <Button
-                      type="submit"
-                      className="w-full bg-election-blue hover:bg-blue-700"
-                      disabled={registerMutation.isPending}
-                    >
-                      {registerMutation.isPending ? "Registrando..." : "Registrar"}
-                    </Button>
-                  </form>
-                </Form>
-              </TabsContent>
+
+                      <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+                        {loginMutation.isPending ? "Entrando..." : "Entrar"}
+                      </Button>
+                      
+                      {/* Quick Login Buttons */}
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <p className="text-xs text-slate-grey text-center mb-3">Login rápido para teste:</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              loginForm.setValue("username", "admin");
+                              loginForm.setValue("password", "admin123");
+                              loginMutation.mutate({ username: "admin", password: "admin123" });
+                            }}
+                            disabled={loginMutation.isPending}
+                            className="text-xs"
+                          >
+                            Admin
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              loginForm.setValue("username", "researcher");
+                              loginForm.setValue("password", "researcher123");
+                              loginMutation.mutate({ username: "researcher", password: "researcher123" });
+                            }}
+                            disabled={loginMutation.isPending}
+                            className="text-xs"
+                          >
+                            Pesquisador
+                          </Button>
+                        </div>
+                      </div>
+                    </form>
+                  </Form>
+                </TabsContent>
+
+                <TabsContent value="register" className="space-y-4">
+                  <Form {...registerForm}>
+                    <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
+                      <FormField
+                        control={registerForm.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nome completo</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="Digite seu nome completo" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={registerForm.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Usuário</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="Escolha um nome de usuário" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={registerForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="email" placeholder="Digite seu email" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={registerForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Senha</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="password" placeholder="Crie uma senha segura" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={registerForm.control}
+                        name="role"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Tipo de conta</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione o tipo de conta" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="admin">
+                                  <div className="flex items-center space-x-2">
+                                    <Badge variant="secondary">Admin</Badge>
+                                    <span>Administrador</span>
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="researcher">
+                                  <div className="flex items-center space-x-2">
+                                    <Badge variant="outline">Pesquisador</Badge>
+                                    <span>Pesquisador de campo</span>
+                                  </div>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {registerMutation.error && (
+                        <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+                          {String(registerMutation.error)}
+                        </div>
+                      )}
+
+                      <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
+                        {registerMutation.isPending ? "Criando conta..." : "Criar conta"}
+                      </Button>
+                    </form>
+                  </Form>
+                </TabsContent>
+              </Tabs>
             </CardContent>
-          </Tabs>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );

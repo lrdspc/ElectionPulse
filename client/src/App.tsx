@@ -13,8 +13,8 @@ import ResearcherDashboard from "@/pages/researcher-dashboard";
 function Router() {
   return (
     <Switch>
-      <ProtectedRoute path="/" component={() => <AdminDashboard />} />
-      <ProtectedRoute path="/researcher" component={() => <ResearcherDashboard />} />
+      <ProtectedRoute path="/" component={AdminDashboard} requiredRole="admin" />
+      <ProtectedRoute path="/researcher" component={ResearcherDashboard} requiredRole="researcher" />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
