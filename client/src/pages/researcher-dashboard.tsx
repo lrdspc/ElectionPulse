@@ -87,34 +87,54 @@ export default function ResearcherDashboard() {
             </div>
           </header>
 
-          {/* Map Container */}
-          <div className="flex-1 relative">
-            <InteractiveMap 
-              assignments={assignments || []}
-              onAssignmentClick={handleStartSurvey}
-            />
+          {/* Main Content */}
+          <div className="flex-1 flex">
+            {/* Map Container */}
+            <div className="flex-1 relative">
+              {(() => {
+                const { mapComponent } = InteractiveMap({ 
+                  assignments: assignments || [], 
+                  onAssignmentClick: handleStartSurvey 
+                });
+                return mapComponent;
+              })()}
+              
+              {/* Mobile Stats Panel */}
+              <div className="lg:hidden absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-2xl font-bold text-success-green">
+                      {statsLoading ? "..." : stats?.completedSurveys || 0}
+                    </p>
+                    <p className="text-xs text-slate-grey">Concluídas</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-warning-amber">
+                      {statsLoading ? "..." : stats?.inProgressSurveys || 0}
+                    </p>
+                    <p className="text-xs text-slate-grey">Em Progresso</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-election-blue">
+                      {assignmentsLoading ? "..." : assignments?.length || 0}
+                    </p>
+                    <p className="text-xs text-slate-grey">Atribuídas</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             
-            {/* Mobile Stats Panel */}
-            <div className="lg:hidden absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-success-green">
-                    {statsLoading ? "..." : stats?.completedSurveys || 0}
-                  </p>
-                  <p className="text-xs text-slate-grey">Concluídas</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-warning-amber">
-                    {statsLoading ? "..." : stats?.inProgressSurveys || 0}
-                  </p>
-                  <p className="text-xs text-slate-grey">Em Progresso</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-election-blue">
-                    {assignmentsLoading ? "..." : assignments?.length || 0}
-                  </p>
-                  <p className="text-xs text-slate-grey">Atribuídas</p>
-                </div>
+            {/* Assignments Panel */}
+            <div className="hidden lg:block w-80 bg-white border-l border-gray-200 overflow-y-auto">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-dark-slate mb-4">Suas Atribuições</h3>
+                {(() => {
+                  const { assignmentCards } = InteractiveMap({ 
+                    assignments: assignments || [], 
+                    onAssignmentClick: handleStartSurvey 
+                  });
+                  return assignmentCards;
+                })()}
               </div>
             </div>
           </div>

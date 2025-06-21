@@ -51,14 +51,14 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
       try {
         // Dynamic import to avoid require() error
         const L = await import('leaflet');
-        
+
         if (mapRef.current && !map) {
           const mapInstance = L.default.map(mapRef.current).setView([-23.5505, -46.6333], 13);
-          
+
           L.default.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
           }).addTo(mapInstance);
-          
+
           setMap(mapInstance);
         }
       } catch (error) {
@@ -209,66 +209,66 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
     ? assignments 
     : assignments.filter(a => a.status === selectedFilter);
 
-  return (
-    <div className="w-full h-full relative bg-gray-100 rounded-lg overflow-hidden">
-      {/* Map Container */}
-      <div ref={mapRef} className="absolute inset-0 z-10" style={{ minHeight: '400px', height: '100%', width: '100%' }}>
-        {/* Fallback when map fails to load */}
-        {!map && (
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-            <div className="text-center">
-              <MapPin className="w-16 h-16 text-election-blue mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-dark-slate mb-2">Mapa Interativo</h3>
-              <p className="text-slate-grey">Carregando visualização das regiões...</p>
+  return {
+    mapComponent: (
+      <div className="w-full h-full relative bg-gray-100 rounded-lg overflow-hidden">
+        {/* Map Container */}
+        <div ref={mapRef} className="absolute inset-0 z-10" style={{ minHeight: '400px', height: '100%', width: '100%' }}>
+          {/* Fallback when map fails to load */}
+          {!map && (
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+              <div className="text-center">
+                <MapPin className="w-16 h-16 text-election-blue mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-dark-slate mb-2">Mapa Interativo</h3>
+                <p className="text-slate-grey">Carregando visualização das regiões...</p>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-
-      {/* Assignment Cards Overlay */}
-      <div className="absolute inset-4 overflow-y-auto z-20 pointer-events-none">
-        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 pointer-events-auto">
-          {assignments.map((assignment) => (
-            <Card key={assignment.id} className="bg-white/95 backdrop-blur-sm shadow-lg">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-dark-slate text-sm mb-1">
-                      {assignment.survey?.title || "Pesquisa"}
-                    </h4>
-                    <p className="text-xs text-slate-grey flex items-center">
-                      <MapPin className="w-3 h-3 mr-1" />
-                      {assignment.region?.name || "Região"}
-                    </p>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className={getStatusColor(assignment.status)}
-                  >
-                    {getStatusLabel(assignment.status)}
-                  </Badge>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-xs text-slate-grey">
-                    <span className="font-medium text-dark-slate">
-                      {assignment.completedResponses}
-                    </span>
-                    /{assignment.targetResponses} respostas
-                  </div>
-                  <Button 
-                    size="sm" 
-                    onClick={() => onAssignmentClick?.(assignment)}
-                    className="bg-election-blue hover:bg-blue-700 text-xs px-3 py-1 h-auto"
-                  >
-                    Iniciar
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          )}
         </div>
       </div>
-    </div>
-  );
+    ),
+    assignmentCards: (
+      <div className="space-y-4">
+        {assignments.map((assignment) => (
+          <Card key={assignment.id} className="bg-white shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                  <h4 className="font-medium text-dark-slate text-sm mb-1">
+                    {assignment.survey?.title || "Pesquisa"}
+                  </h4>
+                  <p className="text-xs text-slate-grey flex items-center">
+                    <MapPin className="w-3 h-3 mr-1" />
+                    {assignment.region?.name || "Região"}
+                  </p>
+                </div>
+                <Badge 
+                  variant="outline" 
+                  className={getStatusColor(assignment.status)}
+                >
+                  {getStatusLabel(assignment.status)}
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-slate-grey">
+                  <span className="font-medium text-dark-slate">
+                    {assignment.completedResponses}
+                  </span>
+                  /{assignment.targetResponses} respostas
+                </div>
+                <Button 
+                  size="sm" 
+                  onClick={() => onAssignmentClick?.(assignment)}
+                  className="bg-election-blue hover:bg-blue-700 text-xs px-3 py-1 h-auto"
+                >
+                  Iniciar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  };
 }
