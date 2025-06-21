@@ -249,7 +249,7 @@ export function registerRoutes(app: Express): Server {
       const researchersWithoutPasswords = researchers.map(({ password, ...researcher }) => researcher);
       res.json(researchersWithoutPasswords);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch researchers" });
+      res.status(500).json({ message: "Falha ao buscar pesquisadores" });
     }
   });
 
@@ -266,7 +266,7 @@ export function registerRoutes(app: Express): Server {
         res.json(stats);
       }
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch statistics" });
+      res.status(500).json({ message: "Falha ao buscar estatísticas" });
     }
   });
 
@@ -293,10 +293,10 @@ export function registerRoutes(app: Express): Server {
           res.json(demographicsReport);
           break;
         default:
-          res.status(400).json({ message: "Invalid report type" });
+          res.status(400).json({ message: "Tipo de relatório inválido" });
       }
     } catch (error) {
-      res.status(500).json({ message: "Failed to generate report" });
+      res.status(500).json({ message: "Falha ao gerar relatório" });
     }
   });
 
@@ -326,7 +326,7 @@ export function registerRoutes(app: Express): Server {
           filename = `relatorio-demografico-${new Date().toISOString().split('T')[0]}.${format}`;
           break;
         default:
-          return res.status(400).json({ message: "Invalid report type" });
+          return res.status(400).json({ message: "Tipo de relatório inválido" });
       }
 
       if (format === 'csv') {
@@ -338,7 +338,7 @@ export function registerRoutes(app: Express): Server {
         res.json(reportData);
       }
     } catch (error) {
-      res.status(500).json({ message: "Failed to download report" });
+      res.status(500).json({ message: "Falha ao baixar relatório" });
     }
   });
 
@@ -351,7 +351,7 @@ export function registerRoutes(app: Express): Server {
       await storage.deleteSurvey(parseInt(req.params.id));
       res.sendStatus(200);
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete survey" });
+      res.status(500).json({ message: "Falha ao excluir pesquisa" });
     }
   });
 
@@ -364,7 +364,7 @@ export function registerRoutes(app: Express): Server {
       await storage.deleteRegion(parseInt(req.params.id));
       res.sendStatus(200);
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete region" });
+      res.status(500).json({ message: "Falha ao excluir região" });
     }
   });
 
