@@ -335,6 +335,19 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  app.delete("/api/regions/:id", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.sendStatus(401);
+      }
+      
+      await storage.deleteRegion(parseInt(req.params.id));
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete region" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 
