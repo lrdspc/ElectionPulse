@@ -213,7 +213,7 @@ export function registerRoutes(app: Express): Server {
       
       res.json([]);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch responses" });
+      res.status(500).json({ message: "Falha ao buscar respostas" });
     }
   });
 
