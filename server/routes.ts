@@ -23,7 +23,7 @@ export function registerRoutes(app: Express): Server {
       
       res.json(surveys);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch surveys" });
+      res.status(500).json({ message: "Falha ao buscar pesquisas" });
     }
   });
 
@@ -42,9 +42,9 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(survey);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid survey data", errors: error.errors });
+        return res.status(400).json({ message: "Dados de pesquisa inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to create survey" });
+      res.status(500).json({ message: "Falha ao criar pesquisa" });
     }
   });
 
@@ -212,9 +212,9 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(response);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid response data", errors: error.errors });
+        return res.status(400).json({ message: "Dados de resposta inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to create response" });
+      res.status(500).json({ message: "Falha ao criar resposta" });
     }
   });
 

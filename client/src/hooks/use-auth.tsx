@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onError: (error: Error) => {
       toast({
-        title: "Registration failed",
+        title: "Falha no cadastro",
         description: error.message,
         variant: "destructive",
       });
