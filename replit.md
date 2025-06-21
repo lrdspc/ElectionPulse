@@ -104,6 +104,13 @@ The application is configured for deployment on Replit with the following setup:
   - Survey builder with demographic criteria and questions
   - Real-time statistics and progress tracking
   - Portuguese language interface for Brazilian electoral surveys
+  
+- June 21, 2025: Critical bug fixes and security improvements
+  - Fixed password hash exposure in API responses and logs
+  - Resolved React render warnings with proper useEffect usage
+  - Corrected admin navigation routing from root paths to /admin/* paths
+  - Fixed map component dynamic import issues
+  - Improved authentication redirect flow performance
 
 ## Changelog
 
