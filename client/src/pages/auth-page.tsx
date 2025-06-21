@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -201,41 +200,6 @@ export default function AuthPage() {
                       <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
                         {loginMutation.isPending ? "Entrando..." : "Entrar"}
                       </Button>
-                      
-                      {/* Quick Login Buttons */}
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <p className="text-xs text-slate-grey text-center mb-3">Login rápido para teste:</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              loginForm.setValue("username", "admin");
-                              loginForm.setValue("password", "admin123");
-                              loginMutation.mutate({ username: "admin", password: "admin123" });
-                            }}
-                            disabled={loginMutation.isPending}
-                            className="text-xs"
-                          >
-                            Admin
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              loginForm.setValue("username", "researcher");
-                              loginForm.setValue("password", "researcher123");
-                              loginMutation.mutate({ username: "researcher", password: "researcher123" });
-                            }}
-                            disabled={loginMutation.isPending}
-                            className="text-xs"
-                          >
-                            Pesquisador
-                          </Button>
-                        </div>
-                      </div>
                     </form>
                   </Form>
                 </TabsContent>
