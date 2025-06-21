@@ -71,6 +71,11 @@ export interface IStorage {
     todaySurveys: number;
     successRate: number;
   }>;
+
+  // Report operations
+  getResponsesReport(): Promise<any[]>;
+  getPerformanceReport(): Promise<any[]>;
+  getDemographicsReport(): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {

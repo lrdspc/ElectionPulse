@@ -1,16 +1,25 @@
 
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import AdminSidebar from "@/components/admin-sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Download, BarChart3, PieChart, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function AdminReports() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedReportType, setSelectedReportType] = useState<string>("");
+  const [reportData, setReportData] = useState<any[]>([]);
 
   if (user?.role !== "admin") {
     setLocation("/");
@@ -20,6 +29,62 @@ export default function AdminReports() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["/api/stats"],
   });
+
+  const handleViewReport = async (reportType: string) => {
+    try {
+      const response = await apiRequest("GET", `/api/reports/${reportType}`);
+      const data = await response.json();
+      setReportData(data);
+      setSelectedReportType(reportType);
+      setShowReportModal(true);
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar o relatório",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDownloadReport = async (reportType: string) => {
+    try {
+      const response = await fetch(`/api/reports/${reportType}/download?format=csv`, {
+        credentials: 'include'
+      });
+      
+      if (!response.ok) throw new Error('Download failed');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `relatorio-${reportType}-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Download concluído",
+        description: "Relatório baixado com sucesso",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro no download",
+        description: "Não foi possível baixar o relatório",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getReportTitle = (type: string) => {
+    switch (type) {
+      case 'responses': return 'Relatório de Respostas por Região';
+      case 'performance': return 'Relatório de Performance dos Pesquisadores';
+      case 'demographics': return 'Relatório Demográfico';
+      default: return 'Relatório';
+    }
+  };
 
   const reports = [
     {
@@ -129,10 +194,18 @@ export default function AdminReports() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleViewReport(report.type)}
+                          >
                             Visualizar
                           </Button>
-                          <Button size="sm" className="bg-election-blue hover:bg-blue-700">
+                          <Button 
+                            size="sm" 
+                            className="bg-election-blue hover:bg-blue-700"
+                            onClick={() => handleDownloadReport(report.type)}
+                          >
                             <Download className="w-4 h-4 mr-1" />
                             Baixar
                           </Button>
@@ -166,6 +239,45 @@ export default function AdminReports() {
           </div>
         </main>
       </div>
+
+      {/* Report Modal */}
+      <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{getReportTitle(selectedReportType)}</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-96 overflow-auto">
+            {reportData.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {Object.keys(reportData[0]).map((key) => (
+                      <TableHead key={key} className="capitalize">
+                        {key.replace(/([A-Z])/g, ' $1').trim()}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {reportData.map((row, index) => (
+                    <TableRow key={index}>
+                      {Object.values(row).map((value: any, cellIndex) => (
+                        <TableCell key={cellIndex}>
+                          {typeof value === 'object' ? JSON.stringify(value) : value}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center py-8 text-slate-grey">
+                Nenhum dado encontrado para este relatório
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import AdminSidebar from "@/components/admin-sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,11 +9,17 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart3, Plus, Eye, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import SurveyBuilder from "@/components/survey-builder";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function AdminSurveys() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
   const [showSurveyBuilder, setShowSurveyBuilder] = useState(false);
+  const [showSurveyDetails, setShowSurveyDetails] = useState(false);
+  const [selectedSurvey, setSelectedSurvey] = useState<any>(null);
 
   if (user?.role !== "admin") {
     setLocation("/");
@@ -23,6 +29,51 @@ export default function AdminSurveys() {
   const { data: surveys, isLoading } = useQuery({
     queryKey: ["/api/surveys"],
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (surveyId: number) => {
+      await apiRequest("DELETE", `/api/surveys/${surveyId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/surveys"] });
+      toast({
+        title: "Pesquisa excluída",
+        description: "A pesquisa foi excluída com sucesso",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir a pesquisa",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleViewSurvey = async (surveyId: number) => {
+    try {
+      const response = await apiRequest("GET", `/api/surveys/${surveyId}`);
+      const survey = await response.json();
+      
+      const questionsResponse = await apiRequest("GET", `/api/surveys/${surveyId}/questions`);
+      const questions = await questionsResponse.json();
+      
+      setSelectedSurvey({ ...survey, questions });
+      setShowSurveyDetails(true);
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os detalhes da pesquisa",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteSurvey = (surveyId: number) => {
+    if (confirm("Tem certeza que deseja excluir esta pesquisa?")) {
+      deleteMutation.mutate(surveyId);
+    }
+  };
 
   return (
     <div className="min-h-screen flex bg-light-grey">

@@ -250,6 +250,109 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Reports routes
+  app.get("/api/reports/:type", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.sendStatus(401);
+      }
+
+      const reportType = req.params.type;
+      
+      switch (reportType) {
+        case 'responses':
+          const responseReport = await storage.getResponsesReport();
+          res.json(responseReport);
+          break;
+        case 'performance':
+          const performanceReport = await storage.getPerformanceReport();
+          res.json(performanceReport);
+          break;
+        case 'demographics':
+          const demographicsReport = await storage.getDemographicsReport();
+          res.json(demographicsReport);
+          break;
+        default:
+          res.status(400).json({ message: "Invalid report type" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate report" });
+    }
+  });
+
+  app.get("/api/reports/:type/download", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.sendStatus(401);
+      }
+
+      const reportType = req.params.type;
+      const format = req.query.format || 'csv';
+      
+      let reportData;
+      let filename;
+      
+      switch (reportType) {
+        case 'responses':
+          reportData = await storage.getResponsesReport();
+          filename = `relatorio-respostas-${new Date().toISOString().split('T')[0]}.${format}`;
+          break;
+        case 'performance':
+          reportData = await storage.getPerformanceReport();
+          filename = `relatorio-performance-${new Date().toISOString().split('T')[0]}.${format}`;
+          break;
+        case 'demographics':
+          reportData = await storage.getDemographicsReport();
+          filename = `relatorio-demografico-${new Date().toISOString().split('T')[0]}.${format}`;
+          break;
+        default:
+          return res.status(400).json({ message: "Invalid report type" });
+      }
+
+      if (format === 'csv') {
+        const csvContent = generateCSV(reportData);
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.send(csvContent);
+      } else {
+        res.json(reportData);
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to download report" });
+    }
+  });
+
+  app.delete("/api/surveys/:id", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.sendStatus(401);
+      }
+      
+      await storage.deleteSurvey(parseInt(req.params.id));
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete survey" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+
+function generateCSV(data: any[]): string {
+  if (!data || data.length === 0) return '';
+  
+  const headers = Object.keys(data[0]);
+  const csvHeaders = headers.join(',');
+  
+  const csvRows = data.map(row => 
+    headers.map(header => {
+      const value = row[header];
+      return typeof value === 'string' && value.includes(',') 
+        ? `"${value}"` 
+        : value;
+    }).join(',')
+  );
+  
+  return [csvHeaders, ...csvRows].join('\n');
+}
 }
