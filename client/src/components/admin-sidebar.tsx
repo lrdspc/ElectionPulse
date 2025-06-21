@@ -1,83 +1,98 @@
-import { cn } from "@/lib/utils";
-import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useLocation } from "wouter";
 import { 
-  Home, 
+  Gauge, 
   BarChart3, 
-  MapPin, 
+  Map, 
   Users, 
   FileText, 
-  Settings, 
   LogOut,
-  CheckCircle
+  Vote 
 } from "lucide-react";
 
 export default function AdminSidebar() {
-  const [location, setLocation] = useLocation();
-  const { logout } = useAuth();
+  const { user, logoutMutation } = useAuth();
+  const [location, navigate] = useLocation();
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   const menuItems = [
-    { icon: Home, label: "Dashboard", path: "/admin" },
-    { icon: BarChart3, label: "Pesquisas", path: "/admin/surveys" },
-    { icon: MapPin, label: "Regiões", path: "/admin/regions" },
-    { icon: Users, label: "Pesquisadores", path: "/admin/researchers" },
-    { icon: FileText, label: "Relatórios", path: "/admin/reports" },
+    { path: "/", icon: Gauge, label: "Dashboard", active: location === "/" },
+    { path: "/surveys", icon: BarChart3, label: "Pesquisas", active: location === "/surveys" },
+    { path: "/regions", icon: Map, label: "Regiões", active: location === "/regions" },
+    { path: "/researchers", icon: Users, label: "Pesquisadores", active: location === "/researchers" },
+    { path: "/reports", icon: FileText, label: "Relatórios", active: location === "/reports" },
   ];
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      {/* Logo/Header */}
+    <div className="w-64 bg-white shadow-lg flex flex-col">
+      {/* Logo */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-election-blue rounded-lg flex items-center justify-center">
-            <CheckCircle className="w-6 h-6 text-white" />
+            <Vote className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-dark-slate">ElectionSurvey</h1>
-            <p className="text-sm text-slate-grey">Administrador</p>
+            <h1 className="text-lg font-bold text-dark-slate">ElectionSurvey</h1>
+            <p className="text-xs text-slate-grey">Admin Panel</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4">
-        <div className="space-y-2">
+      <nav className="flex-1 p-6">
+        <ul className="space-y-2">
           {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location === item.path;
-
+            const IconComponent = item.icon;
             return (
-              <button
-                key={item.path}
-                onClick={() => setLocation(item.path)}
-                className={cn(
-                  "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors",
-                  isActive
-                    ? "bg-election-blue text-white"
-                    : "text-slate-grey hover:bg-gray-100 hover:text-dark-slate"
-                )}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
-              </button>
+              <li key={item.path}>
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-start ${
+                    item.active 
+                      ? "bg-election-blue text-white hover:bg-blue-700" 
+                      : "text-slate-grey hover:bg-gray-100"
+                  }`}
+                  onClick={() => navigate(item.path)}
+                >
+                  <IconComponent className="w-4 h-4 mr-3" />
+                  {item.label}
+                </Button>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-slate-grey hover:text-dark-slate"
-          onClick={logout}
-        >
-          <LogOut className="w-5 h-5 mr-3" />
-          Sair
-        </Button>
+      {/* User Profile */}
+      <div className="p-6 border-t border-gray-200">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="flex items-center space-x-3">
+            <Avatar className="w-10 h-10">
+              <AvatarFallback className="bg-election-blue text-white">
+                {user?.name?.[0]?.toUpperCase() || "A"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-dark-slate truncate">
+                {user?.name || "Administrador"}
+              </p>
+              <p className="text-xs text-slate-grey">Administrador</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="text-slate-grey hover:text-dark-slate"
+            >
+              <LogOut className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

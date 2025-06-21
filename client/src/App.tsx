@@ -5,11 +5,11 @@ import { Toaster } from "@/components/ui/toaster";
 import ProtectedRoute from "@/lib/protected-route";
 import AuthPage from "@/pages/auth-page";
 import AdminDashboard from "@/pages/admin-dashboard";
-import AdminSurveys from "@/pages/admin-surveys";
-import AdminRegions from "@/pages/admin-regions";
-import AdminResearchers from "@/pages/admin-researchers";
-import AdminReports from "@/pages/admin-reports";
 import ResearcherDashboard from "@/pages/researcher-dashboard";
+import SurveysPage from "@/pages/surveys-page";
+import RegionsPage from "@/pages/regions-page";
+import ResearchersPage from "@/pages/researchers-page";
+import ReportsPage from "@/pages/reports-page";
 import NotFound from "@/pages/not-found";
 import { queryClient } from "@/lib/queryClient";
 
