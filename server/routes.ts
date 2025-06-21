@@ -57,7 +57,7 @@ export function registerRoutes(app: Express): Server {
       
       res.json(survey);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch survey" });
+      res.status(500).json({ message: "Falha ao buscar pesquisa" });
     }
   });
 
@@ -109,7 +109,7 @@ export function registerRoutes(app: Express): Server {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Dados de questão inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to create question" });
+      res.status(500).json({ message: "Falha ao criar questão" });
     }
   });
 
@@ -121,7 +121,7 @@ export function registerRoutes(app: Express): Server {
       const regions = await storage.getRegions();
       res.json(regions);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch regions" });
+      res.status(500).json({ message: "Falha ao buscar regiões" });
     }
   });
 
@@ -136,9 +136,9 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(region);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid region data", errors: error.errors });
+        return res.status(400).json({ message: "Dados de região inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to create region" });
+      res.status(500).json({ message: "Falha ao criar região" });
     }
   });
 
