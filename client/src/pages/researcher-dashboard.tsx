@@ -91,13 +91,10 @@ export default function ResearcherDashboard() {
           <div className="flex-1 flex">
             {/* Map Container */}
             <div className="flex-1 relative">
-              {(() => {
-                const { mapComponent } = InteractiveMap({ 
-                  assignments: assignments || [], 
-                  onAssignmentClick: handleStartSurvey 
-                });
-                return mapComponent;
-              })()}
+              <InteractiveMap 
+                assignments={assignments || []} 
+                onAssignmentClick={handleStartSurvey}
+              />
               
               {/* Mobile Stats Panel */}
               <div className="lg:hidden absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10">
@@ -128,13 +125,11 @@ export default function ResearcherDashboard() {
             <div className="hidden lg:block w-80 bg-white border-l border-gray-200 overflow-y-auto">
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-dark-slate mb-4">Suas Atribuições</h3>
-                {(() => {
-                  const { assignmentCards } = InteractiveMap({ 
-                    assignments: assignments || [], 
-                    onAssignmentClick: handleStartSurvey 
-                  });
-                  return assignmentCards;
-                })()}
+                <InteractiveMap 
+                  assignments={assignments || []} 
+                  onAssignmentClick={handleStartSurvey}
+                  showAssignmentCards={true}
+                />
               </div>
             </div>
           </div>

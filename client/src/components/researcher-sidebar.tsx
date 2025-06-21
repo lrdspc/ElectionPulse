@@ -9,13 +9,42 @@ import {
   LogOut,
   Vote 
 } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function ResearcherSidebar() {
   const { user, logoutMutation } = useAuth();
+  const [location, setLocation] = useLocation();
 
   const handleLogout = () => {
     logoutMutation.mutate();
   };
+
+  const navigationItems = [
+    {
+      path: "/researcher",
+      label: "Mapa de Pesquisas",
+      icon: MapPin,
+      active: location === "/researcher"
+    },
+    {
+      path: "/researcher/assignments",
+      label: "Minhas Atribuições",
+      icon: ClipboardList,
+      active: location === "/researcher/assignments"
+    },
+    {
+      path: "/researcher/progress",
+      label: "Meu Progresso",
+      icon: TrendingUp,
+      active: location === "/researcher/progress"
+    },
+    {
+      path: "/researcher/history",
+      label: "Histórico",
+      icon: History,
+      active: location === "/researcher/history"
+    }
+  ];
 
   return (
     <div className="w-64 bg-white shadow-lg hidden lg:flex flex-col">
@@ -35,42 +64,25 @@ export default function ResearcherSidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-6">
         <ul className="space-y-2">
-          <li>
-            <Button
-              variant="ghost"
-              className="w-full justify-start bg-success-green text-white hover:bg-green-600"
-            >
-              <MapPin className="w-4 h-4 mr-3" />
-              Mapa de Pesquisas
-            </Button>
-          </li>
-          <li>
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-slate-grey hover:bg-gray-100"
-            >
-              <ClipboardList className="w-4 h-4 mr-3" />
-              Minhas Atribuições
-            </Button>
-          </li>
-          <li>
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-slate-grey hover:bg-gray-100"
-            >
-              <TrendingUp className="w-4 h-4 mr-3" />
-              Meu Progresso
-            </Button>
-          </li>
-          <li>
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-slate-grey hover:bg-gray-100"
-            >
-              <History className="w-4 h-4 mr-3" />
-              Histórico
-            </Button>
-          </li>
+          {navigationItems.map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <li key={item.path}>
+                <Button
+                  variant="ghost"
+                  onClick={() => setLocation(item.path)}
+                  className={`w-full justify-start ${
+                    item.active 
+                      ? "bg-success-green text-white hover:bg-green-600" 
+                      : "text-slate-grey hover:bg-gray-100"
+                  }`}
+                >
+                  <IconComponent className="w-4 h-4 mr-3" />
+                  {item.label}
+                </Button>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
