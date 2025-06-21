@@ -98,16 +98,22 @@ export function registerRoutes(app: Express): Server {
         return res.sendStatus(401);
       }
       
+      // Log para debug
+      console.log("Criando questão:", req.body, "para survey:", req.params.id);
+      
       const questionData = insertQuestionSchema.parse({
         ...req.body,
         surveyId: parseInt(req.params.id)
       });
+      
+      console.log("Dados validados:", questionData);
       
       const question = await storage.createQuestion(questionData);
       res.status(201).json(question);
     } catch (error) {
       console.error("Erro ao criar questão:", error);
       if (error instanceof z.ZodError) {
+        console.log("Erros de validação:", error.errors);
         return res.status(400).json({ message: "Dados de questão inválidos", errors: error.errors });
       }
       res.status(500).json({ 
@@ -167,12 +173,18 @@ export function registerRoutes(app: Express): Server {
         return res.sendStatus(401);
       }
       
+      // Log para debug
+      console.log("Criando atribuição:", req.body);
+      
       const assignmentData = insertSurveyAssignmentSchema.parse(req.body);
+      console.log("Dados de atribuição validados:", assignmentData);
+      
       const assignment = await storage.createSurveyAssignment(assignmentData);
       res.status(201).json(assignment);
     } catch (error) {
       console.error("Erro ao criar atribuição:", error);
       if (error instanceof z.ZodError) {
+        console.log("Erros de validação da atribuição:", error.errors);
         return res.status(400).json({ message: "Dados de atribuição inválidos", errors: error.errors });
       }
       res.status(500).json({ 
