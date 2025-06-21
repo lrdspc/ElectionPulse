@@ -37,26 +37,26 @@ export default function ResearcherDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-light-grey">
+    <div className="min-h-screen bg-light-grey mobile-safe-area">
       {/* Mobile Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 px-4 py-4 lg:hidden">
+      <header className="mobile-header bg-white shadow-sm border-b border-gray-200 mobile-padding lg:hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-election-blue rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-4 h-4 text-white" />
+            <div className="w-10 h-10 bg-election-blue rounded-lg flex items-center justify-center touch-target">
+              <CheckCircle className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-dark-slate">ElectionSurvey</h1>
-              <p className="text-xs text-slate-grey">Pesquisador</p>
+              <h1 className="responsive-text-xl font-bold text-dark-slate">ElectionSurvey</h1>
+              <p className="text-sm text-slate-grey">Pesquisador</p>
             </div>
           </div>
           <Button
             onClick={() => handleStartSurvey()}
-            size="sm"
-            className="bg-election-blue hover:bg-blue-700"
+            className="mobile-button bg-election-blue hover:bg-blue-700 touch-feedback touch-target"
           >
             <Play className="w-4 h-4 mr-2" />
-            Iniciar
+            <span className="hidden xs:inline">Iniciar</span>
+            <span className="xs:hidden">+</span>
           </Button>
         </div>
       </header>
@@ -97,25 +97,49 @@ export default function ResearcherDashboard() {
               />
               
               {/* Mobile Stats Panel */}
-              <div className="lg:hidden absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10">
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <p className="text-2xl font-bold text-success-green">
+              <div className="lg:hidden absolute bottom-4 left-4 right-4 bg-white mobile-card mobile-padding z-10 mobile-safe-area">
+                <div className="mobile-grid-3 text-center">
+                  <div className="touch-target flex flex-col justify-center">
+                    <p className="responsive-text-2xl font-bold text-success-green">
                       {statsLoading ? "..." : stats?.completedSurveys || 0}
                     </p>
-                    <p className="text-xs text-slate-grey">Concluídas</p>
+                    <p className="text-xs text-slate-grey mt-1">Concluídas</p>
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-warning-amber">
+                  <div className="touch-target flex flex-col justify-center">
+                    <p className="responsive-text-2xl font-bold text-warning-amber">
                       {statsLoading ? "..." : stats?.inProgressSurveys || 0}
                     </p>
-                    <p className="text-xs text-slate-grey">Em Progresso</p>
+                    <p className="text-xs text-slate-grey mt-1">Em Progresso</p>
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-election-blue">
+                  <div className="touch-target flex flex-col justify-center">
+                    <p className="responsive-text-2xl font-bold text-election-blue">
                       {assignmentsLoading ? "..." : assignments?.length || 0}
                     </p>
-                    <p className="text-xs text-slate-grey">Atribuídas</p>
+                    <p className="text-xs text-slate-grey mt-1">Atribuídas</p>
+                  </div>
+                </div>
+                
+                {/* Quick Action Buttons */}
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1 mobile-button touch-feedback"
+                      onClick={() => window.location.href = '/my-assignments'}
+                    >
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Tarefas
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1 mobile-button touch-feedback"
+                      onClick={() => window.location.href = '/my-progress'}
+                    >
+                      <TrendingUp className="w-4 h-4 mr-2" />
+                      Progresso
+                    </Button>
                   </div>
                 </div>
               </div>

@@ -58,21 +58,21 @@ export default function AdminDashboard() {
         {/* Main Content */}
         <main className="p-8">
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardContent className="p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <Card className="mobile-card touch-feedback">
+              <CardContent className="mobile-padding">
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="flex-1">
                     <p className="text-slate-grey text-sm font-medium">Pesquisas Ativas</p>
-                    <p className="text-2xl font-bold text-dark-slate">
+                    <p className="responsive-text-2xl font-bold text-dark-slate mt-1">
                       {statsLoading ? "..." : stats?.activeSurveys || 0}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-election-blue bg-opacity-10 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-election-blue" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-election-blue bg-opacity-10 rounded-lg flex items-center justify-center touch-target">
+                    <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-election-blue" />
                   </div>
                 </div>
-                <div className="mt-4 flex items-center">
+                <div className="mt-3 sm:mt-4 flex items-center">
                   <span className="text-success-green text-sm font-medium">+2.5%</span>
                   <span className="text-slate-grey text-sm ml-2">vs último mês</span>
                 </div>

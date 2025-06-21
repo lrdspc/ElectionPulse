@@ -60,16 +60,16 @@ export default function MyProgress() {
       
       <div className="flex-1">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-8 py-6">
-          <div className="flex items-center justify-between">
+        <header className="bg-white shadow-sm border-b border-gray-200 mobile-padding lg:px-8 lg:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
             <div>
-              <h2 className="text-2xl font-bold text-dark-slate">Meu Progresso</h2>
-              <p className="text-slate-grey">Acompanhe seu desempenho e estatísticas</p>
+              <h2 className="responsive-text-2xl font-bold text-dark-slate">Meu Progresso</h2>
+              <p className="text-slate-grey text-sm sm:text-base">Acompanhe seu desempenho e estatísticas</p>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 bg-success-green bg-opacity-10 rounded-lg px-3 py-2 sm:bg-transparent sm:p-0">
               <TrendingUp className="w-5 h-5 text-success-green" />
-              <span className="text-lg font-bold text-dark-slate">{overallProgress}%</span>
-              <span className="text-slate-grey">concluído</span>
+              <span className="responsive-text-xl font-bold text-dark-slate">{overallProgress}%</span>
+              <span className="text-slate-grey text-sm">concluído</span>
             </div>
           </div>
         </header>

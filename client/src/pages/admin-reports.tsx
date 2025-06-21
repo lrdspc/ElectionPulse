@@ -126,14 +126,14 @@ export default function AdminReports() {
 
         <main className="p-8">
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardContent className="p-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
+            <Card className="mobile-card">
+              <CardContent className="p-4 sm:p-6">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-election-blue">
+                  <p className="responsive-text-2xl font-bold text-election-blue">
                     {isLoading ? "..." : stats?.activeSurveys || 0}
                   </p>
-                  <p className="text-sm text-slate-grey">Pesquisas Ativas</p>
+                  <p className="text-xs sm:text-sm text-slate-grey mt-1">Pesquisas Ativas</p>
                 </div>
               </CardContent>
             </Card>
