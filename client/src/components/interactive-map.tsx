@@ -44,6 +44,11 @@ export default function InteractiveMap({
   useEffect(() => {
     if (typeof window === 'undefined' || !mapRef.current) return;
 
+    // Clear any existing content first
+    if (mapRef.current) {
+      mapRef.current.innerHTML = '';
+    }
+
     const initMap = async () => {
       try {
         const L = await import('leaflet');
@@ -56,7 +61,7 @@ export default function InteractiveMap({
           shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
         });
 
-        if (mapRef.current && !map) {
+        if (mapRef.current) {
           const newMap = L.map(mapRef.current).setView([-22.9068, -43.1729], 11);
 
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -115,11 +120,15 @@ export default function InteractiveMap({
 
     return () => {
       if (map) {
-        map.remove();
+        try {
+          map.remove();
+        } catch (error) {
+          console.warn('Error removing map:', error);
+        }
         setMap(null);
       }
     };
-  }, [assignments, onAssignmentClick, map]);
+  }, [assignments, onAssignmentClick]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
