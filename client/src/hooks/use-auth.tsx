@@ -38,11 +38,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      toast({
+        title: "Login realizado com sucesso",
+        description: `Bem-vindo, ${user.name}!`,
+      });
     },
     onError: (error: Error) => {
       toast({
-        title: "Login failed",
-        description: error.message,
+        title: "Erro no login",
+        description: "Usuário ou senha incorretos",
         variant: "destructive",
       });
     },

@@ -212,14 +212,14 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
   return (
     <div className="w-full h-full relative bg-gray-100 rounded-lg overflow-hidden">
       {/* Map Container */}
-      <div ref={mapRef} className="absolute inset-0 z-10" style={{ minHeight: '400px' }}>
+      <div ref={mapRef} className="absolute inset-0 z-10" style={{ minHeight: '400px', height: '100%', width: '100%' }}>
         {/* Fallback when map fails to load */}
         {!map && (
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
             <div className="text-center">
               <MapPin className="w-16 h-16 text-election-blue mx-auto mb-4" />
               <h3 className="text-lg font-medium text-dark-slate mb-2">Mapa Interativo</h3>
-              <p className="text-slate-grey">Visualização das regiões de pesquisa</p>
+              <p className="text-slate-grey">Carregando visualização das regiões...</p>
             </div>
           </div>
         )}
