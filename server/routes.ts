@@ -153,7 +153,7 @@ export function registerRoutes(app: Express): Server {
       
       res.json(assignments);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch assignments" });
+      res.status(500).json({ message: "Falha ao buscar atribuições" });
     }
   });
 
@@ -168,9 +168,9 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(assignment);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid assignment data", errors: error.errors });
+        return res.status(400).json({ message: "Dados de atribuição inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to create assignment" });
+      res.status(500).json({ message: "Falha ao criar atribuição" });
     }
   });
 
