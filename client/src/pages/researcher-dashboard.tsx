@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Clock, Calendar, Percent, Play } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ResearcherDashboard() {
   const { user } = useAuth();
@@ -16,11 +16,12 @@ export default function ResearcherDashboard() {
   const [showSurveyModal, setShowSurveyModal] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
 
-  // Redirect non-researcher users
-  if (user && user.role !== "researcher") {
-    setLocation("/admin");
-    return null;
-  }
+  // Redirect non-researcher users using useEffect to avoid state update during render
+  useEffect(() => {
+    if (user && user.role !== "researcher") {
+      setLocation("/admin");
+    }
+  }, [user, setLocation]);
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/stats"],

@@ -226,7 +226,8 @@ export function registerRoutes(app: Express): Server {
       }
       
       const researchers = await storage.getResearchers();
-      res.json(researchers);
+      const researchersWithoutPasswords = researchers.map(({ password, ...researcher }) => researcher);
+      res.json(researchersWithoutPasswords);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch researchers" });
     }
