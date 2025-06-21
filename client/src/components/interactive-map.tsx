@@ -96,6 +96,18 @@ export default function InteractiveMap({
         }
       } catch (error) {
         console.error('Error loading map:', error);
+        // Show fallback message if map fails to load
+        if (mapRef.current) {
+          mapRef.current.innerHTML = `
+            <div class="flex items-center justify-center h-full bg-gray-100 rounded-lg">
+              <div class="text-center">
+                <MapPin class="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                <p class="text-gray-600">Erro ao carregar mapa</p>
+                <p class="text-sm text-gray-500">Verifique sua conexão com a internet</p>
+              </div>
+            </div>
+          `;
+        }
       }
     };
 

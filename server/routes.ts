@@ -74,9 +74,9 @@ export function registerRoutes(app: Express): Server {
       res.json(survey);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid survey data", errors: error.errors });
+        return res.status(400).json({ message: "Dados de pesquisa inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to update survey" });
+      res.status(500).json({ message: "Falha ao atualizar pesquisa" });
     }
   });
 
@@ -88,7 +88,7 @@ export function registerRoutes(app: Express): Server {
       const questions = await storage.getQuestionsBySurvey(parseInt(req.params.id));
       res.json(questions);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch questions" });
+      res.status(500).json({ message: "Falha ao buscar questões" });
     }
   });
 
@@ -107,7 +107,7 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(question);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid question data", errors: error.errors });
+        return res.status(400).json({ message: "Dados de questão inválidos", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create question" });
     }
