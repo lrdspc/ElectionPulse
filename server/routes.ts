@@ -106,10 +106,14 @@ export function registerRoutes(app: Express): Server {
       const question = await storage.createQuestion(questionData);
       res.status(201).json(question);
     } catch (error) {
+      console.error("Erro ao criar questão:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Dados de questão inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Falha ao criar questão" });
+      res.status(500).json({ 
+        message: "Falha ao criar questão", 
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
@@ -167,10 +171,14 @@ export function registerRoutes(app: Express): Server {
       const assignment = await storage.createSurveyAssignment(assignmentData);
       res.status(201).json(assignment);
     } catch (error) {
+      console.error("Erro ao criar atribuição:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Dados de atribuição inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Falha ao criar atribuição" });
+      res.status(500).json({ 
+        message: "Falha ao criar atribuição", 
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
