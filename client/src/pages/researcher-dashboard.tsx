@@ -17,8 +17,8 @@ export default function ResearcherDashboard() {
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
 
   // Redirect non-researcher users
-  if (user?.role !== "researcher") {
-    setLocation("/");
+  if (user && user.role !== "researcher") {
+    setLocation("/admin");
     return null;
   }
 

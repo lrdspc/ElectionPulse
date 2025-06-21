@@ -56,7 +56,7 @@ export default function AuthPage() {
   // Redirect if already logged in
   if (user) {
     if (user.role === "admin") {
-      setLocation("/");
+      setLocation("/admin");
     } else {
       setLocation("/researcher");
     }
@@ -67,7 +67,7 @@ export default function AuthPage() {
     loginMutation.mutate(data, {
       onSuccess: (user) => {
         if (user.role === "admin") {
-          setLocation("/");
+          setLocation("/admin");
         } else {
           setLocation("/researcher");
         }
@@ -79,7 +79,7 @@ export default function AuthPage() {
     registerMutation.mutate(data, {
       onSuccess: (user) => {
         if (user.role === "admin") {
-          setLocation("/");
+          setLocation("/admin");
         } else {
           setLocation("/researcher");
         }

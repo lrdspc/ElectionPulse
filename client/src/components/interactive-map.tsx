@@ -45,10 +45,24 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
 
   useEffect(() => {
     const initMap = async () => {
-    // Placeholder for map initialization
-    // For now, we'll show a simplified view without actual map integration
-    console.log('Map initialization placeholder');
-  };
+      try {
+        // Dynamic import to avoid require() error
+        const L = await import('leaflet');
+        
+        if (mapRef.current && !map) {
+          const mapInstance = L.map(mapRef.current).setView([-23.5505, -46.6333], 13);
+          
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+          }).addTo(mapInstance);
+          
+          setMap(mapInstance);
+        }
+      } catch (error) {
+        console.error('Error initializing map:', error);
+        // Fallback to simplified view without map
+      }
+    };
 
     initMap();
 
@@ -57,7 +71,7 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
         map.remove();
       }
     };
-  }, []);
+  }, [map]);
 
   useEffect(() => {
     const addMarkers = async () => {
@@ -191,18 +205,23 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
 
   return (
     <div className="w-full h-full relative bg-gray-100 rounded-lg overflow-hidden">
-      {/* Map Placeholder */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-        <div className="text-center">
-          <MapPin className="w-16 h-16 text-election-blue mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-dark-slate mb-2">Mapa Interativo</h3>
-          <p className="text-slate-grey">Visualização das regiões de pesquisa</p>
-        </div>
+      {/* Map Container */}
+      <div ref={mapRef} className="absolute inset-0 z-10" style={{ minHeight: '400px' }}>
+        {/* Fallback when map fails to load */}
+        {!map && (
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+            <div className="text-center">
+              <MapPin className="w-16 h-16 text-election-blue mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-dark-slate mb-2">Mapa Interativo</h3>
+              <p className="text-slate-grey">Visualização das regiões de pesquisa</p>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Assignment Cards */}
-      <div className="absolute inset-4 overflow-y-auto">
-        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+      {/* Assignment Cards Overlay */}
+      <div className="absolute inset-4 overflow-y-auto z-20 pointer-events-none">
+        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 pointer-events-auto">
           {assignments.map((assignment) => (
             <Card key={assignment.id} className="bg-white/95 backdrop-blur-sm shadow-lg">
               <CardContent className="p-4">
