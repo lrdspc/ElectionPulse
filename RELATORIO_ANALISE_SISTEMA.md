@@ -6,6 +6,82 @@
 
 ---
 
+## 0. DESCRIÇÃO COMPLETA DO PROJETO
+
+### O que é o Projeto
+Um sistema web completo para gerenciamento de pesquisas eleitorais com dois tipos de usuários: administradores que criam e gerenciam pesquisas, e pesquisadores de campo que coletam dados através de um interface móvel otimizada com mapa interativo.
+
+### Objetivo Principal
+Facilitar a coleta estruturada de dados eleitorais através de uma plataforma digital que permite:
+- Criação de pesquisas com questões customizadas
+- Atribuição geográfica de tarefas para pesquisadores
+- Coleta de dados demográficos e respostas em campo
+- Geração de relatórios e análises estatísticas
+- Monitoramento de progresso em tempo real
+
+### Situação Atual do Projeto
+
+**Funcionalidades Implementadas e Funcionais:**
+- Autenticação robusta com roles (admin/researcher)
+- Interface administrativa completa com dashboard
+- Interface do pesquisador com visualização de mapas
+- API REST estruturada com todas as rotas
+- Banco de dados PostgreSQL com schema completo
+- Sistema de relatórios básico
+- Interface responsiva com Tailwind CSS
+
+### Erros Críticos Identificados
+
+**1. Sistema de Questões Quebrado**
+- Administradores não conseguem adicionar questões às pesquisas
+- API retorna erro 500 ao tentar criar questões
+- Problema no schema ou validação Zod
+
+**2. Sistema de Atribuições Não Funcional**
+- Impossível atribuir pesquisas aos pesquisadores
+- Violação de foreign key constraints
+- Pesquisadores não veem tarefas atribuídas (lista sempre vazia)
+
+**3. Fluxo de Coleta de Dados Interrompido**
+- Sem atribuições válidas, pesquisadores não podem registrar respostas
+- Sistema não funcional para cenários reais de uso
+
+**4. Inconsistências de Localização**
+- Mensagens de erro misturando português e inglês
+- Interface inconsistente linguisticamente
+
+### Visão do Projeto Finalizado
+
+**Cenário Ideal de Funcionamento:**
+
+1. **Administrador cria pesquisa eleitoral** "Eleição Municipal 2024" com questões sobre intenção de voto, avaliação de gestão e dados demográficos
+
+2. **Sistema de questões funcionando perfeitamente** - Admin adiciona questões do tipo radio, checkbox, texto livre e escalas de avaliação
+
+3. **Atribuições geográficas eficazes** - Admin atribui a pesquisa para pesquisador "Maria Silva" na região "Centro - Zona 1" com meta de 100 entrevistas até 30/07/2024
+
+4. **Pesquisador em campo** - Maria acessa o app no celular, vê o mapa com sua região destacada, inicia coleta porta-a-porta
+
+5. **Coleta de dados fluida** - Para cada entrevista, Maria preenche dados demográficos (idade, gênero, escolaridade, renda) e registra respostas, com geolocalização automática
+
+6. **Monitoramento em tempo real** - Admin acompanha progresso: 67/100 entrevistas concluídas, 23% intenção Candidato A, 31% Candidato B
+
+7. **Relatórios analíticos** - Sistema gera gráficos de intenção por região, perfil demográfico dos respondentes, análise de tendências
+
+**Funcionalidades Finais Visionadas:**
+- Dashboard em tempo real com mapas de calor
+- Notificações push para pesquisadores sobre novas tarefas
+- Funcionalidade offline para coleta em áreas sem internet
+- Exportação de dados para Excel/CSV
+- Sistema de aprovação de respostas pelo admin
+- Analytics avançados com filtros por demografia
+- Interface mobile otimizada como PWA instalável
+
+**Impacto Esperado:**
+O sistema substituirá pesquisas manuais com papel, aumentando eficiência em 300%, reduzindo erros de transcrição, permitindo análises em tempo real e fornecendo dados georreferenciados para campanhas eleitorais e institutos de pesquisa.
+
+---
+
 ## 1. VISÃO GERAL DO SISTEMA
 
 ### Arquitetura Atual
