@@ -299,7 +299,6 @@ export default function SurveyModal({ assignment, onClose }: SurveyModalProps) {
                     <h4 className="font-semibold text-dark-slate mb-4">
                       <span className="text-election-blue mr-2">{currentQuestion}.</span>
                       {mockQuestions[currentQuestion - 1].question}
-                    </h4>uestion}
                     </h4>
 
                     <FormField
