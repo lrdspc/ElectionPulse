@@ -53,16 +53,13 @@ export default function AuthPage() {
     },
   });
 
-  // Redirect if already logged in using useEffect to avoid state update during render
+  // Redirect if already logged in - only redirect on successful authentication, not on initial load
   useEffect(() => {
-    if (user) {
-      if (user.role === "admin") {
-        setLocation("/admin");
-      } else {
-        setLocation("/researcher");
-      }
+    if (user && !loginMutation.isPending && !registerMutation.isPending) {
+      const redirectPath = user.role === "admin" ? "/admin" : "/researcher";
+      setLocation(redirectPath);
     }
-  }, [user, setLocation]);
+  }, [user, setLocation, loginMutation.isPending, registerMutation.isPending]);
 
   const onLogin = (data: LoginForm) => {
     loginMutation.mutate(data, {

@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, CheckCircle, Clock, AlertCircle, Calendar } from "lucide-react";
 
+// Import Leaflet CSS
+import 'leaflet/dist/leaflet.css';
+
 interface Assignment {
   id: number;
   surveyId: number;
@@ -50,9 +53,9 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
         const L = await import('leaflet');
         
         if (mapRef.current && !map) {
-          const mapInstance = L.map(mapRef.current).setView([-23.5505, -46.6333], 13);
+          const mapInstance = L.default.map(mapRef.current).setView([-23.5505, -46.6333], 13);
           
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          L.default.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
           }).addTo(mapInstance);
           
@@ -64,14 +67,17 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
       }
     };
 
-    initMap();
+    if (!map) {
+      initMap();
+    }
 
     return () => {
       if (map) {
         map.remove();
+        setMap(null);
       }
     };
-  }, [map]);
+  }, []); // Remove map dependency to prevent infinite loop
 
   useEffect(() => {
     const addMarkers = async () => {
@@ -110,7 +116,7 @@ export default function InteractiveMap({ assignments, onAssignmentClick }: Inter
             return;
           }
 
-          const marker = L.circleMarker([coord.lat, coord.lng], {
+          const marker = L.default.circleMarker([coord.lat, coord.lng], {
             color: color,
             fillColor: color,
             fillOpacity: 0.8,
