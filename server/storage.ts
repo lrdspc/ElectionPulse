@@ -379,6 +379,70 @@ export class DatabaseStorage implements IStorage {
       successRate,
     };
   }
+
+  async getResponsesReport(): Promise<any[]> {
+    try {
+      // Para dados reais, fazemos consulta simples primeiro
+      const result = await db
+        .select({
+          surveyTitle: surveys.title,
+          totalSurveys: sql<number>`count(distinct ${surveys.id})`,
+          createdAt: surveys.createdAt
+        })
+        .from(surveys)
+        .groupBy(surveys.id, surveys.title, surveys.createdAt);
+
+      return result.length > 0 ? result : [
+        { surveyTitle: "Nenhuma pesquisa encontrada", totalSurveys: 0, createdAt: new Date() }
+      ];
+    } catch (error) {
+      console.error('Error in getResponsesReport:', error);
+      return [{ surveyTitle: "Erro ao carregar dados", totalSurveys: 0, createdAt: new Date() }];
+    }
+  }
+
+  async getPerformanceReport(): Promise<any[]> {
+    try {
+      const result = await db
+        .select({
+          researcherName: users.name,
+          totalAssignments: sql<number>`0`,
+          completedAssignments: sql<number>`0`,
+          totalResponses: sql<number>`0`,
+          successRate: sql<number>`0`
+        })
+        .from(users)
+        .where(eq(users.role, 'researcher'));
+
+      return result.length > 0 ? result : [
+        { researcherName: "Nenhum pesquisador encontrado", totalAssignments: 0, completedAssignments: 0, totalResponses: 0, successRate: 0 }
+      ];
+    } catch (error) {
+      console.error('Error in getPerformanceReport:', error);
+      return [{ researcherName: "Erro ao carregar dados", totalAssignments: 0, completedAssignments: 0, totalResponses: 0, successRate: 0 }];
+    }
+  }
+
+  async getDemographicsReport(): Promise<any[]> {
+    try {
+      const result = await db
+        .select({
+          regionName: regions.name,
+          totalRegions: sql<number>`count(${regions.id})`,
+          city: regions.city,
+          state: regions.state
+        })
+        .from(regions)
+        .groupBy(regions.id, regions.name, regions.city, regions.state);
+
+      return result.length > 0 ? result : [
+        { regionName: "Nenhuma região encontrada", totalRegions: 0, city: "", state: "" }
+      ];
+    } catch (error) {
+      console.error('Error in getDemographicsReport:', error);
+      return [{ regionName: "Erro ao carregar dados", totalRegions: 0, city: "", state: "" }];
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();

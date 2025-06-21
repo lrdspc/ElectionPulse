@@ -1,16 +1,39 @@
 
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import AdminSidebar from "@/components/admin-sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Plus, Edit, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+
+const regionSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  description: z.string().optional(),
+  city: z.string().min(1, "Cidade é obrigatória"),
+  state: z.string().min(1, "Estado é obrigatório"),
+});
+
+type RegionForm = z.infer<typeof regionSchema>;
 
 export default function AdminRegions() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const [showRegionModal, setShowRegionModal] = useState(false);
+  const [editingRegion, setEditingRegion] = useState<any>(null);
 
   if (user?.role !== "admin") {
     setLocation("/");
@@ -20,6 +43,69 @@ export default function AdminRegions() {
   const { data: regions, isLoading } = useQuery({
     queryKey: ["/api/regions"],
   });
+
+  const form = useForm<RegionForm>({
+    resolver: zodResolver(regionSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      city: "",
+      state: "",
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: RegionForm) => {
+      const response = await apiRequest("POST", "/api/regions", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/regions"] });
+      setShowRegionModal(false);
+      form.reset();
+      toast({
+        title: "Região criada",
+        description: "A região foi criada com sucesso",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível criar a região",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (regionId: number) => {
+      await apiRequest("DELETE", `/api/regions/${regionId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/regions"] });
+      toast({
+        title: "Região excluída",
+        description: "A região foi excluída com sucesso",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir a região",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = (data: RegionForm) => {
+    createMutation.mutate(data);
+  };
+
+  const handleDelete = (regionId: number) => {
+    if (confirm("Tem certeza que deseja excluir esta região?")) {
+      deleteMutation.mutate(regionId);
+    }
+  };
 
   return (
     <div className="min-h-screen flex bg-light-grey">
@@ -32,7 +118,10 @@ export default function AdminRegions() {
               <h2 className="text-2xl font-bold text-dark-slate">Regiões</h2>
               <p className="text-slate-grey">Gerencie as regiões de pesquisa</p>
             </div>
-            <Button className="bg-election-blue hover:bg-blue-700">
+            <Button 
+              className="bg-election-blue hover:bg-blue-700"
+              onClick={() => setShowRegionModal(true)}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Nova Região
             </Button>

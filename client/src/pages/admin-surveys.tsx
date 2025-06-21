@@ -148,7 +148,11 @@ export default function AdminSurveys() {
                         Criada em: {new Date(survey.createdAt).toLocaleDateString()}
                       </div>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleViewSurvey(survey.id)}
+                        >
                           <Eye className="w-4 h-4 mr-1" />
                           Ver
                         </Button>
@@ -156,7 +160,13 @@ export default function AdminSurveys() {
                           <Edit className="w-4 h-4 mr-1" />
                           Editar
                         </Button>
-                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="text-red-600 hover:text-red-700"
+                          onClick={() => handleDeleteSurvey(survey.id)}
+                          disabled={deleteMutation.isPending}
+                        >
                           <Trash2 className="w-4 h-4 mr-1" />
                           Excluir
                         </Button>
@@ -173,6 +183,56 @@ export default function AdminSurveys() {
       {showSurveyBuilder && (
         <SurveyBuilder onClose={() => setShowSurveyBuilder(false)} />
       )}
+
+      {/* Survey Details Modal */}
+      <Dialog open={showSurveyDetails} onOpenChange={setShowSurveyDetails}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{selectedSurvey?.title}</DialogTitle>
+          </DialogHeader>
+          {selectedSurvey && (
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Descrição</h4>
+                <p className="text-slate-grey">{selectedSurvey.description || "Nenhuma descrição disponível"}</p>
+              </div>
+              
+              <div>
+                <h4 className="font-medium mb-2">Status</h4>
+                <Badge variant={selectedSurvey.status === "active" ? "default" : "secondary"}>
+                  {selectedSurvey.status === "active" ? "Ativa" : "Rascunho"}
+                </Badge>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">Perguntas ({selectedSurvey.questions?.length || 0})</h4>
+                {selectedSurvey.questions?.length > 0 ? (
+                  <div className="space-y-3">
+                    {selectedSurvey.questions.map((question: any, index: number) => (
+                      <div key={question.id} className="p-3 border rounded-lg">
+                        <p className="font-medium text-sm">{index + 1}. {question.question}</p>
+                        <p className="text-xs text-slate-grey mt-1">Tipo: {question.type}</p>
+                        {question.options && (
+                          <div className="mt-2">
+                            <p className="text-xs text-slate-grey mb-1">Opções:</p>
+                            <ul className="list-disc list-inside text-xs text-slate-grey ml-2">
+                              {question.options.map((option: string, optIndex: number) => (
+                                <li key={optIndex}>{option}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-grey text-sm">Nenhuma pergunta cadastrada</p>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

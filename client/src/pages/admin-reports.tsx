@@ -230,7 +230,10 @@ export default function AdminReports() {
                   <p className="text-slate-grey mb-4">
                     Configure filtros específicos e gere relatórios sob medida
                   </p>
-                  <Button className="bg-election-blue hover:bg-blue-700">
+                  <Button 
+                    className="bg-election-blue hover:bg-blue-700"
+                    onClick={() => handleViewReport('performance')}
+                  >
                     Criar Relatório Customizado
                   </Button>
                 </div>
