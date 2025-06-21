@@ -94,9 +94,20 @@ The application is configured for deployment on Replit with the following setup:
 - Schema definitions in `/shared/schema.ts`
 - Database push command: `npm run db:push`
 
+## Recent Changes
+
+- June 21, 2025: Complete electoral survey platform implemented
+  - Authentication system with admin/researcher roles
+  - Admin dashboard with survey creation and management
+  - Researcher dashboard with interactive map interface
+  - Database seeded with test users (admin/admin123, researcher/researcher123)
+  - Survey builder with demographic criteria and questions
+  - Real-time statistics and progress tracking
+  - Portuguese language interface for Brazilian electoral surveys
+
 ## Changelog
 
-- June 21, 2025. Initial setup
+- June 21, 2025. Initial setup and full application development
 
 ## User Preferences
 
